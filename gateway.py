@@ -25,7 +25,14 @@ global lcd_message_2
 global lcd_buzzer
 global lcd_done
 global lcd_number
+global topic_command_response
+global topic_command
+global topic_sensors
 
+gateway = "gateway1"
+topic_command_response = "applefarm/"+gateway+"/command/response"
+topic_command = "applefarm/"+gateway+"/command"
+topic_sensors = "applefarm/"+gateway+"/"
 lcd_number = 0
 lcd_buzzer = False
 lcd_message_1 = ""
@@ -44,6 +51,7 @@ GPIO.output(pin_buzz, GPIO.LOW)
 broker = 'localhost'
 port = 1883
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
+sclient_id = f'python-mqtt-{random.randint(0, 1000)}'
 username = 'architecture'
 password = 'architecture123'
 
@@ -60,14 +68,128 @@ def connect_mqtt():
     client_mqtt.connect(broker, port)
     return client_mqtt
 
+def sconnect_mqtt() -> mqtt_client:
+    def on_connect(sclient, userdata, flags, rc):
+        if rc == 0:
+            print("INFO: Connected subscriber to MQTT Broker!")
+        else:
+            print("INFO: Failed subscriber to connect, return code %d\n", rc)
+
+    sclient = mqtt_client.Client(sclient_id)
+    sclient.username_pw_set(username, password)
+    sclient.on_connect = on_connect
+    sclient.connect(broker, port)
+    return sclient
+
+def subscribe(sclient: mqtt_client):
+   
+    
+    def on_message(sclient, userdata, msg):
+        global lcd_message_1
+        global lcd_message_2
+        global lcd_command
+        global tree_number
+        global tree_down
+        global lcd_number
+        stext = msg.payload.decode()
+        
+        result_splited = stext.split("-")
+
+        size = len(result_splited)
+        
+        
+        if result_splited[0] == "Buzzer":
+            if size > 1 and size < 4:
+                if result_splited[1] == "On":
+                    if size > 2:
+                        if buzzer_control(True, int(result_splited[2]),True) == True:
+                            msg_broker = "Buzzer for tree: "+ result_splited[2] + " is On"
+                            client_mqtt.publish(topic_command_response, msg_broker, 1)
+                        else:
+                            msg_broker = "Buzzer for tree: " + str(tree_number) +  "is alredy ON"
+                            client_mqtt.publish(topic_command_response, msg_broker, 1)
+                        
+                    else:
+                        msg_broker = "You must write which tree is down"
+                        client_mqtt.publish(topic_command_response, msg_broker, 1)
+
+                elif result_splited[1] == "Off":
+                    if size > 2:
+                        if buzzer_control(False, int(result_splited[2]),True) == True:             
+                            msg_broker = "Buzzer for tree: "+ result_splited[2] + " is Off"
+                            client_mqtt.publish(topic_command_response, msg_broker, 1)
+                        else:
+                            msg_broker = "The Buzzer is not for this tree is for tree: " + str(tree_number)
+                            client_mqtt.publish(topic_command_response, msg_broker, 1)
+                    
+
+                else:
+                    msg_broker = "Not a buzzer command"
+                    client_mqtt.publish(topic_command_response, msg_broker, 1)
+            else:
+                msg_broker = "Not a correct number of commands for buzzer"
+                client_mqtt.publish(topic_command_response, msg_broker, 1)
+
+        elif result_splited[0] == "LCD":
+            if size > 1 and size < 5:
+                if result_splited[1] == "On":
+                    if size > 2:
+                        if tree_down == False:
+                            if lcd_number == 0 or lcd_number == int(result_splited[3]):
+                                lcd_number = int(result_splited[3])
+                                lcd_message_1 = result_splited[2]
+                                lcd_message_2 = result_splited[3]
+                                lcd_command = True   
+                                msg_broker = "LCD showing the message"
+                                client_mqtt.publish(topic_command_response, msg_broker, 1)
+                            else:
+                                msg_broker = "There is another message from other tree showing" 
+                                client_mqtt.publish(topic_command_response, msg_broker, 1)
+                        else:
+                            msg_broker = "A tree is down the message is not tree showing"
+                            client_mqtt.publish(topic_command_response, msg_broker, 1)
+                        
+                    else:
+                        msg_broker = "You must write a message" 
+                        client_mqtt.publish(topic_command_response, msg_broker, 1) 
+
+                elif result_splited[1] == "Off":
+                    if lcd_number == int(result_splited[2]):
+                        lcd_number = 0
+                        lcd_command = False
+                        msg_broker = "LCD stopped showing the message" 
+                        client_mqtt.publish(topic_command_response, msg_broker, 1) 
+                    else:                      
+                        msg_broker = "The message is not from this tree is from: " + str(lcd_number)
+                        client_mqtt.publish(topic_command_response, msg_broker, 1)
+
+                else:
+                    msg_broker = "Not a lcd command"
+                    client_mqtt.publish(topic_command_response, msg_broker, 1)
+            else:
+                msg_broker = "Not a correct number of commands for LCD"
+                client_mqtt.publish(topic_command_response, msg_broker, 1)
+        else:
+            msg_broker = "Not a command"
+            client_mqtt.publish(topic_command_response, msg_broker, 1)
+
+
+
+    sclient.subscribe(topic_command, 1)
+    sclient.on_message = on_message
+
+
+
+
+
 def local_sensors():
     global temperature
     global humidity
     while 1:
         temperature = random.uniform(-10, 30)
-        client_mqtt.publish("applefarm/greenhouse/temperature", temperature, 0)
+        client_mqtt.publish(topic_sensors + "temperature", temperature, 0)
         humidity = random.uniform(0, 99)
-        client_mqtt.publish("applefarm/greenhouse/humidity", humidity, 0)
+        client_mqtt.publish(topic_sensors + "humidity", humidity, 0)
         sleep(5)
 
 def get_ip_address():
@@ -133,7 +255,7 @@ def lcd():
                 
             '''
             for i in range(6):
-                if tree_down == True:
+                if tree_down == True or lcd_command == True:
                     break   
                 lcd.clear()
                 cpu_temp = get_ip_address()
@@ -195,16 +317,16 @@ def bluetooth_sensors():
         result_splited = result[0].split()
         if result_splited[0] == "Moisture":
 
-            client_mqtt.publish("applefarm/" + result_splited[2]+ "/moisture", result_splited[1], 0)
+            client_mqtt.publish(topic_sensors + "tree" + result_splited[2]+ "/moisture", result_splited[1], 0)
 
             if int(result_splited[1]) < 80:
                 print("El regadio esta activado")
 
         
         elif result_splited[0] == "Accelerometer":
-            client_mqtt.publish("applefarm/" + result_splited[4]+ "/x", result_splited[1], 0)
-            client_mqtt.publish("applefarm/" + result_splited[4]+ "/y", result_splited[2], 0)
-            client_mqtt.publish("applefarm/" + result_splited[4]+ "/z", result_splited[3], 0)
+            client_mqtt.publish(topic_sensors + "tree" + result_splited[4]+ "/x", result_splited[1], 0)
+            client_mqtt.publish(topic_sensors + "tree" + result_splited[4]+ "/y", result_splited[2], 0)
+            client_mqtt.publish(topic_sensors + "tree" + result_splited[4]+ "/z", result_splited[3], 0)
 
             '''
             if float(result_splited[3]) > 0 and tree_number == 0:
@@ -280,6 +402,10 @@ def buzzer_control(mode,number,lcd):
 client_mqtt = connect_mqtt()
 client_mqtt.loop_start()
 
+sclient = sconnect_mqtt()
+subscribe(sclient)
+sclient.loop_start()
+
 t = threading.Thread(target = lcd)
 t.start()
 
@@ -349,7 +475,7 @@ while 1:
                 if size > 2:
                     if tree_down == False:
                         if lcd_number == 0 or lcd_number == int(result_splited[3]):
-                            lcd_number == int(result_splited[3])
+                            lcd_number = int(result_splited[3])
                             lcd_message_1 = result_splited[2]
                             lcd_message_2 = result_splited[3]
                             lcd_command = True   
@@ -364,11 +490,11 @@ while 1:
 
             elif result_splited[1] == "Off":
                 if lcd_number == int(result_splited[2]):
-                    lcd_number == 0
+                    lcd_number = 0
                     lcd_command = False
                     client_actuator.send("LCD stopped showing the message")   
                 else:
-                    client_actuator.send("The message is not from this tree") 
+                    client_actuator.send("The message is not from this tree is from: " + str(lcd_number)) 
 
             else:
                 client_actuator.send("Not a lcd command")
