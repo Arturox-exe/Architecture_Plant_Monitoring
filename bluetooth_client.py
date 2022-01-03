@@ -3,8 +3,11 @@ import threading
 import random
 from time import sleep
 import sys
-
+global tree
 global bt_addr
+
+tree = "15"
+
 sock_actuator = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 bt_addr = 'e4:5f:01:3c:92:eb'
 port = 1
@@ -29,7 +32,7 @@ def bluetooth_sensors():
             x = random.uniform(-1, 1)
             y = random.uniform(-1, 1)
             z = random.uniform(-1, 1)
-            sock_sensor.send("Moisture " + str(moisture) + " 15")
+            sock_sensor.send("Moisture " + str(moisture) + " " + tree)
             #print("Moisture: " + str(moisture))
             sock_sensor.send("Accelerometer " + str(x) + " " + str(y) + " " + str(z) + " 15")
             #print("Accelerometer: "+ str(x) + " " + str(y) + " " + str(z))
@@ -61,7 +64,7 @@ if connected_act == True:
         if not data:
             data = "Nothing"
             #break
-        #data = data + "-15"
+        #data = data + "-" + tree
         sock_actuator.send(data)
         data = sock_actuator.recv(1024)
         result = str(data).split("'")[1::2]
