@@ -34,7 +34,7 @@ def bluetooth_sensors():
             z = random.uniform(-1, 1)
             sock_sensor.send("Moisture " + str(moisture) + " " + tree)
             #print("Moisture: " + str(moisture))
-            sock_sensor.send("Accelerometer " + str(x) + " " + str(y) + " " + str(z) + " 15")
+            sock_sensor.send("Accelerometer " + str(x) + " " + str(y) + " " + str(z) + " " + tree)
             #print("Accelerometer: "+ str(x) + " " + str(y) + " " + str(z))
             sleep(5)
         
