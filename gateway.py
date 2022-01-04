@@ -10,6 +10,7 @@ import threading
 import bluetooth
 import random
 from paho.mqtt import client as mqtt_client
+import adafruit_dht
 
 global t_stop_buzzer
 
@@ -43,10 +44,13 @@ humidity = 0
 tree_number = 0
 tree_down = False
 pin_buzz = 18  #Variable que contiene el pin(GPIO.BCM) al cual conectamos la señal del LED
+pin_led = 23
 
 GPIO.setmode(GPIO.BCM)   #Establecemos el modo según el cual nos referiremos a los GPIO de nuestra RPi            
 GPIO.setup(pin_buzz, GPIO.OUT) #Configuramos el GPIO18 como salida
+GPIO.setup(pin_led, GPIO.OUT)
 GPIO.output(pin_buzz, GPIO.LOW)
+GPIO.output(pin_led, GPIO.LOW)
 
 broker = 'localhost'
 port = 1883
@@ -185,12 +189,21 @@ def subscribe(sclient: mqtt_client):
 def local_sensors():
     global temperature
     global humidity
+    dhtDevice = adafruit_dht.DHT22(board.D4)
     while 1:
-        temperature = random.uniform(-10, 30)
-        client_mqtt.publish(topic_sensors + "temperature", temperature, 0)
-        humidity = random.uniform(0, 99)
-        client_mqtt.publish(topic_sensors + "humidity", humidity, 0)
-        sleep(5)
+        try:
+            temperature = dhtDevice.temperature
+            client_mqtt.publish(topic_sensors + "temperature", temperature, 0)
+            humidity = dhtDevice.humidity
+            client_mqtt.publish(topic_sensors + "humidity", humidity, 0)
+            sleep(5)
+        except RuntimeError as error:
+        # Errors happen fairly often, DHT's are hard to read, just keep going
+            sleep(5)
+            continue
+        except Exception as error:
+            dhtDevice.exit()
+            raise error
 
 def get_ip_address():
     return [
@@ -319,8 +332,10 @@ def bluetooth_sensors():
 
             client_mqtt.publish(topic_sensors + "tree" + result_splited[2]+ "/moisture", result_splited[1], 0)
 
-            if int(result_splited[1]) < 80:
-                print("El regadio esta activado")
+            if int(result_splited[1]) < 50:
+                GPIO.output( pin_led , GPIO.HIGH )
+            else:
+                GPIO.output( pin_led , GPIO.LOW )
 
         
         elif result_splited[0] == "Accelerometer":
@@ -328,19 +343,19 @@ def bluetooth_sensors():
             client_mqtt.publish(topic_sensors + "tree" + result_splited[4]+ "/y", result_splited[2], 0)
             client_mqtt.publish(topic_sensors + "tree" + result_splited[4]+ "/z", result_splited[3], 0)
 
-            '''
-            if float(result_splited[3]) > 0 and tree_number == 0:
+            
+            if float(result_splited[1]) < -0.9 and tree_number == 0:
                 if buzzer_control(True, int(result_splited[4]),False) == True:
                     print("Buzzer is On")
                 else:
                     print("Buzzer is already On")
 
-            elif float(result_splited[3]) < 0 and tree_number == int(result_splited[4]):
+            elif float(result_splited[1]) >= -0.9 and tree_number == int(result_splited[4]):
                 if buzzer_control(False, int(result_splited[4]),False) == True: 
                     print("Buzzer is Off")
                 else:
                     print("Buzzer On: " +  result_splited[4] +  " was activated manually")
-            '''
+            
         
 def buzzer_control(mode,number,lcd):
     global tree_number
