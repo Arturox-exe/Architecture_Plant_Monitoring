@@ -26,14 +26,21 @@ global lcd_message_2
 global lcd_buzzer
 global lcd_done
 global lcd_number
+global pump_command
+global pump_number
+global pump_command_stop
 global topic_command_response
 global topic_command
 global topic_sensors
+
 
 gateway = "gateway1"
 topic_command_response = "applefarm/"+gateway+"/command/response"
 topic_command = "applefarm/"+gateway+"/command"
 topic_sensors = "applefarm/"+gateway+"/"
+pump_command = False
+pump_number = 0
+pump_command_stop = False
 lcd_number = 0
 lcd_buzzer = False
 lcd_message_1 = ""
@@ -95,6 +102,9 @@ def subscribe(sclient: mqtt_client):
         global tree_number
         global tree_down
         global lcd_number
+        global pump_command
+        global pump_command_stop
+        global pump_number
         stext = msg.payload.decode()
         
         result_splited = stext.split("-")
@@ -173,6 +183,29 @@ def subscribe(sclient: mqtt_client):
             else:
                 msg_broker = "Not a correct number of commands for LCD"
                 client_mqtt.publish(topic_command_response, msg_broker, 1)
+
+        elif result_splited[0] == "Pump":
+            if size > 1 and size < 5:
+                if result_splited[1] == "On":
+                    GPIO.output( pin_led , GPIO.HIGH )
+                    pump_command = True
+                    pump_number = result_splited[2]
+                    msg_broker = "Pump working"
+                    client_mqtt.publish(topic_command_response, msg_broker, 1)
+                if result_splited[1] == "Off":
+                    GPIO.output( pin_led , GPIO.LOW )
+                    pump_command = False
+                    pump_number = 0
+                    msg_broker = "Pump stopped"
+                    if result_splited[3] == "Yes":
+                        pump_command_stop = True
+                    if result_splited[3] == "No":
+                        pump_command_stop = False
+                    client_mqtt.publish(topic_command_response, msg_broker, 1)
+            else:
+                msg_broker = "Not a correct number of commands for pump"
+                client_mqtt.publish(topic_command_response, msg_broker, 1)
+
         else:
             msg_broker = "Not a command"
             client_mqtt.publish(topic_command_response, msg_broker, 1)
@@ -306,6 +339,8 @@ def stop_buzzer():
     GPIO.output(pin_buzz, GPIO.LOW)
 
 def bluetooth_sensors():
+    global pump_number
+
     host = ""
     port_sensor = 2
     server_sensor = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
@@ -329,13 +364,15 @@ def bluetooth_sensors():
 
         result_splited = result[0].split()
         if result_splited[0] == "Moisture":
-
+            
             client_mqtt.publish(topic_sensors + "tree" + result_splited[2]+ "/moisture", result_splited[1], 0)
 
-            if int(result_splited[1]) < 50:
+            if int(result_splited[1]) < 50 and pump_command_stop == False:
                 GPIO.output( pin_led , GPIO.HIGH )
-            else:
+                pump_number = result_splited[2]
+            elif int(result_splited[1]) >= 50 and pump_command == False:
                 GPIO.output( pin_led , GPIO.LOW )
+                pump_number = 0
 
         
         elif result_splited[0] == "Accelerometer":
@@ -515,8 +552,33 @@ while 1:
                 client_actuator.send("Not a lcd command")
         else:
             client_actuator.send("Not a correct number of commands for LCD")
+
+    elif result_splited[0] == "Pump":
+        if size > 1 and size < 5:
+            if result_splited[1] == "On":
+                GPIO.output( pin_led , GPIO.HIGH )
+                pump_command = True
+                pump_number = result_splited[2]
+                client_actuator.send("Pump working")
+            if result_splited[1] == "Off":
+                GPIO.output( pin_led , GPIO.LOW )
+                pump_command = False
+                pump_number = 0
+                if result_splited[3] == "Yes":
+                    pump_command_stop = True
+                if result_splited[3] == "No":
+                    pump_command_stop = False
+                client_actuator.send("Pump stopped")
+        else:
+            client_actuator.send("Not a correct number of commands for pump")
+
     else:
         client_actuator.send("Not a command")
+
+
+
+    
+            
 
 
 client_actuator.close()
