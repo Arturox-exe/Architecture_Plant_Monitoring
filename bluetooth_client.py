@@ -11,7 +11,7 @@ import RPi.GPIO as GPIO
 tree = "15"
 
 sock_actuator = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-bt_addr = 'e4:5f:01:3c:92:eb'
+bt_addr = 'E4:5F:01:3C:92:EB'
 port = 1
 connected_act = False
 
@@ -75,13 +75,13 @@ def bluetooth_sensors():
     sock_sensor = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
     port = 2
     connected_sensor = False
-    print("Trying to connect to {} on PSM 0x{}...".format(bt_addr, port))    
+    print("INFO: Trying to connect to {} on PSM 0x{}...".format(bt_addr, port))    
     try:
         sock_sensor.connect((bt_addr, port))
-        print("Connected to server sensors.")
+        print("INFO: Connected to server sensors.")
         connected_sensor = True
     except:
-        print("Not connected to server sensors.")
+        print("ERROR: Not connected to server sensors.")
     
     if connected_sensor == True:
         while True:
@@ -101,7 +101,7 @@ def bluetooth_sensors():
             z = acc_z/16384.0
 
             sock_sensor.send("Moisture " + moisture + " " + tree)
-            print("Moisture: " + str(moisture))
+            print("Soil Moisture: " + str(moisture))
             sock_sensor.send("Accelerometer " + str(x) + " " + str(y) + " " + str(z) + " " + tree)
             print("Accelerometer: "+ str(x) + " " + str(y) + " " + str(z))
             sleep(5)
@@ -119,15 +119,15 @@ s = threading.Thread(target = bluetooth_sensors)
 s.start()
 
 
-print("Trying to connect to {} on PSM 0x{}...".format(bt_addr, port))
+print("INFO: Trying to connect to {} on PSM 0x{}...".format(bt_addr, port))
 try:
     sock_actuator.connect((bt_addr, port))
 
-    print("Connected to server actuators. Type something...")
+    print("INFO: Connected to server actuators. You can send commands to the gateway...")
     connected_act = True
 
 except:
-    print("Not connected to server actuators.")
+    print("ERROR: Not connected to server actuators.")
 
 if connected_act == True:
     while True:
@@ -144,4 +144,4 @@ if connected_act == True:
     
 
 sock_actuator.close()
-sys.exit("Try again later")
+sys.exit("WARNING: Try again later")
