@@ -1,11 +1,12 @@
 import bluetooth
 import threading
-import random
 from time import sleep
 import sys
 global tree
 global bt_addr
-import smbus			
+import smbus
+import Adafruit_MCP3008
+import RPi.GPIO as GPIO			
 
 tree = "15"
 
@@ -26,6 +27,15 @@ ACCEL_ZOUT_H = 0x3F
 GYRO_XOUT_H  = 0x43
 GYRO_YOUT_H  = 0x45
 GYRO_ZOUT_H  = 0x47
+
+
+am = Adafruit_MCP3008.MCP3008(clk = 11, cs = 8, miso = 9, mosi = 10)
+
+max_hand = 930
+max_water = 310
+
+min_hand =  1023 - max_hand 
+min_water = 1023 - max_water
 
 def MPU_Init():
 	#write to sample rate register
@@ -56,6 +66,9 @@ def read_raw_data(addr):
                 value = value - 65536
         return value
 
+
+
+
 def bluetooth_sensors():
 
 
@@ -72,7 +85,12 @@ def bluetooth_sensors():
     
     if connected_sensor == True:
         while True:
-            moisture = random.randint(0,99)
+            moisture_value = am.read_adc(0) # Get the analog reading from the soil moist sensor
+            per = round(100 - ((moisture_value - max_hand) * 100 / min_hand), 2)   
+            if(per > 100):
+                per = 100
+            
+            moisture = str(per)
 
             acc_x = read_raw_data(ACCEL_XOUT_H)
             acc_y = read_raw_data(ACCEL_YOUT_H)
@@ -82,10 +100,10 @@ def bluetooth_sensors():
             y = acc_y/16384.0
             z = acc_z/16384.0
 
-            sock_sensor.send("Moisture " + str(moisture) + " " + tree)
-            #print("Moisture: " + str(moisture))
+            sock_sensor.send("Moisture " + moisture + " " + tree)
+            print("Moisture: " + str(moisture))
             sock_sensor.send("Accelerometer " + str(x) + " " + str(y) + " " + str(z) + " " + tree)
-            #print("Accelerometer: "+ str(x) + " " + str(y) + " " + str(z))
+            print("Accelerometer: "+ str(x) + " " + str(y) + " " + str(z))
             sleep(5)
         
 
