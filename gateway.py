@@ -367,10 +367,10 @@ def bluetooth_sensors():
             
             client_mqtt.publish(topic_sensors + "tree" + result_splited[2]+ "/moisture", result_splited[1], 0)
 
-            if int(result_splited[1]) < 50 and pump_command_stop == False:
+            if float(result_splited[1]) < 50 and pump_command_stop == False:
                 GPIO.output( pin_led , GPIO.HIGH )
                 pump_number = result_splited[2]
-            elif int(result_splited[1]) >= 50 and pump_command == False:
+            elif float(result_splited[1]) >= 50 and pump_command == False:
                 GPIO.output( pin_led , GPIO.LOW )
                 pump_number = 0
 
@@ -382,16 +382,10 @@ def bluetooth_sensors():
 
             
             if float(result_splited[1]) < -0.9 and tree_number == 0:
-                if buzzer_control(True, int(result_splited[4]),False) == True:
-                    print("Buzzer is On")
-                else:
-                    print("Buzzer is already On")
+                buzzer_control(True, int(result_splited[4]),False)
 
             elif float(result_splited[1]) >= -0.9 and tree_number == int(result_splited[4]):
-                if buzzer_control(False, int(result_splited[4]),False) == True: 
-                    print("Buzzer is Off")
-                else:
-                    print("Buzzer On: " +  result_splited[4] +  " was activated manually")
+                buzzer_control(False, int(result_splited[4]),False)
             
         
 def buzzer_control(mode,number,lcd):
