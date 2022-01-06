@@ -226,8 +226,10 @@ def local_sensors():
     while 1:
         try:
             temperature = dhtDevice.temperature
+            print("Temperature: " + str(temperature))
             client_mqtt.publish(topic_sensors + "temperature", temperature, 0)
             humidity = dhtDevice.humidity
+            print("Humidity: " + str(humidity))
             client_mqtt.publish(topic_sensors + "humidity", humidity, 0)
             sleep(5)
         except RuntimeError as error:
@@ -344,19 +346,19 @@ def bluetooth_sensors():
     host = ""
     port_sensor = 2
     server_sensor = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-    print("Creating Bluetooth Socket for sensors")
+    print("INFO: Creating Bluetooth Socket for sensors")
     try:
         #server.bind((host, bluetooth.PORT_ANY))
         server_sensor.bind((host, port_sensor))
-        print("Binding sensors completo")
+        print("INFO: Binding sensors complete")
     except:
-        print("Binding sensors incompleto")
+        print("INFO: Binding sensors incomplete")
 
     server_sensor.listen(1)
 
     client_sensor, address_sensor = server_sensor.accept()
-    print("Server sensor connected to: ", address_sensor)
-    print("Client ", client_sensor)
+    print("INFO: Server sensor connected to: ", address_sensor)
+    print("INFO: Client ", client_sensor)
 
     while 1:
         data = client_sensor.recv(1024)
@@ -464,19 +466,19 @@ s.start()
 host = ""
 port_actuator = 1
 server_actuator = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-print("Creating Bluetooth Socket for actuators")
+print("INFO: Creating Bluetooth Socket for actuators")
 try:
     #server.bind((host, bluetooth.PORT_ANY))
     server_actuator.bind((host, port_actuator))
-    print("Binding actuators completo")
+    print("INFO: Binding actuators complete")
 except:
-    print("Binding actuators incompleto")
+    print("ERROR: Binding actuators incomplete")
 
 server_actuator.listen(1)
 
 client_actuator, address_actuator = server_actuator.accept()
-print("Server actuator connected to: ", address_actuator)
-print("Client ", client_actuator)
+print("INFO: Server actuator connected to: ", address_actuator)
+print("INFO: Client ", client_actuator)
 
 
 while 1:
