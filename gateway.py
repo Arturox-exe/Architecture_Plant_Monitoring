@@ -37,7 +37,7 @@ global topic_sensors
 gateway = "gateway1"
 topic_command_response = "applefarm/"+gateway+"/command/response"
 topic_command = "applefarm/"+gateway+"/command"
-topic_sensors = "applefarm/"+gateway+"/"
+topic_sensors = "applefarm/"+gateway
 pump_command = False
 pump_number = 0
 pump_command_stop = False
@@ -227,10 +227,9 @@ def local_sensors():
         try:
             temperature = dhtDevice.temperature
             print("Temperature: " + str(temperature))
-            client_mqtt.publish(topic_sensors + "temperature", temperature, 0)
             humidity = dhtDevice.humidity
             print("Humidity: " + str(humidity))
-            client_mqtt.publish(topic_sensors + "humidity", humidity, 0)
+            client_mqtt.publish(topic_sensors, '{"temperature":'+ str(temperature) + ', "humidity":' + str(humidity) + '}', 0)
             sleep(5)
         except RuntimeError as error:
         # Errors happen fairly often, DHT's are hard to read, just keep going
@@ -365,29 +364,33 @@ def bluetooth_sensors():
         result = str(data).split("'")[1::2]
 
         result_splited = result[0].split()
-        if result_splited[0] == "Moisture":
-            
-            client_mqtt.publish(topic_sensors + "tree" + result_splited[2]+ "/moisture", result_splited[1], 0)
 
-            if float(result_splited[1]) < 50 and pump_command_stop == False:
-                GPIO.output( pin_led , GPIO.HIGH )
-                pump_number = result_splited[2]
-            elif float(result_splited[1]) >= 50 and pump_command == False:
-                GPIO.output( pin_led , GPIO.LOW )
-                pump_number = 0
+        b_moisture = result_splited[0]
+        b_x = result_splited[1]
+        b_y = result_splited[2]
+        b_z = result_splited[3]
+        b_tree = result_splited[4]
+        
+            
+        client_mqtt.publish(topic_sensors + "/tree" + b_tree, '{"moisture":' + b_moisture + ', "x":' + b_x + ', "y":' + b_y + ', "z":' + b_z + '}', 0)
+
+        if float(b_moisture) < 50 and pump_command_stop == False:
+            GPIO.output( pin_led , GPIO.HIGH )
+            pump_number = result_splited[2]
+        elif float(b_moisture) >= 50 and pump_command == False:
+            GPIO.output( pin_led , GPIO.LOW )
+            pump_number = 0
+
+        if float(b_x) < -0.9 and tree_number == 0:
+            buzzer_control(True, int(result_splited[4]),False)
+
+        elif float(b_x) >= -0.9 and tree_number == int(result_splited[4]):
+            buzzer_control(False, int(result_splited[4]),False)
 
         
-        elif result_splited[0] == "Accelerometer":
-            client_mqtt.publish(topic_sensors + "tree" + result_splited[4]+ "/x", result_splited[1], 0)
-            client_mqtt.publish(topic_sensors + "tree" + result_splited[4]+ "/y", result_splited[2], 0)
-            client_mqtt.publish(topic_sensors + "tree" + result_splited[4]+ "/z", result_splited[3], 0)
-
+        
             
-            if float(result_splited[1]) < -0.9 and tree_number == 0:
-                buzzer_control(True, int(result_splited[4]),False)
 
-            elif float(result_splited[1]) >= -0.9 and tree_number == int(result_splited[4]):
-                buzzer_control(False, int(result_splited[4]),False)
             
         
 def buzzer_control(mode,number,lcd):
