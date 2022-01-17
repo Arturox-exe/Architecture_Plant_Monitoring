@@ -59,12 +59,15 @@ GPIO.setup(pin_led, GPIO.OUT)
 GPIO.output(pin_buzz, GPIO.LOW)
 GPIO.output(pin_led, GPIO.LOW)
 
-broker = 'localhost'
+broker = "broker.hivemq.com" 
+#broker = 'localhost'
 port = 1883
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
+client_id_gateway = f'python-mqtt-{random.randint(0, 1000)}'
 sclient_id = f'python-mqtt-{random.randint(0, 1000)}'
 username = 'architecture'
 password = 'architecture123'
+
 
 def connect_mqtt():
     def on_connect(client_mqtt, userdata, flags, rc):
@@ -452,6 +455,7 @@ def buzzer_control(mode,number,lcd):
 
 client_mqtt = connect_mqtt()
 client_mqtt.loop_start()
+
 
 sclient = sconnect_mqtt()
 subscribe(sclient)
