@@ -100,10 +100,9 @@ def bluetooth_sensors():
             y = acc_y/16384.0
             z = acc_z/16384.0
 
-            sock_sensor.send("Moisture " + moisture + " " + tree)
-            print("Soil Moisture: " + str(moisture))
-            sock_sensor.send("Accelerometer " + str(x) + " " + str(y) + " " + str(z) + " " + tree)
-            print("Accelerometer: "+ str(x) + " " + str(y) + " " + str(z))
+            sock_sensor.send(moisture + " " + str(x) + " " + str(y) + " " + str(z) + " " + tree)
+            #print("Soil Moisture: " + str(moisture))
+            #print("Accelerometer: "+ str(x) + " " + str(y) + " " + str(z))
             sleep(5)
         
 
