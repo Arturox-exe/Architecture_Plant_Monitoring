@@ -32,8 +32,13 @@ global pump_command_stop
 global topic_command_response
 global topic_command
 global topic_sensors
+global soil_percentage
+global b_moisture
 
 
+
+b_moisture = "0.0"
+soil_percentage = 50
 gateway = "gateway1"
 topic_command_response = "applefarm/"+gateway+"/command/response"
 topic_command = "applefarm/"+gateway+"/command"
@@ -108,6 +113,7 @@ def subscribe(sclient: mqtt_client):
         global pump_command
         global pump_command_stop
         global pump_number
+        global soil_percentage
         stext = msg.payload.decode()
         
         result_splited = stext.split("-")
@@ -187,6 +193,11 @@ def subscribe(sclient: mqtt_client):
                 msg_broker = "Not a correct number of commands for LCD"
                 client_mqtt.publish(topic_command_response, msg_broker, 1)
 
+        elif result_splited[0] == "Moisture":
+            soil_percentage = float(result_splited[1])
+            msg_broker = "Changed minimum soil moisture for water pump"
+            client_mqtt.publish(topic_command_response, msg_broker, 1)
+
         elif result_splited[0] == "Pump":
             if size > 1 and size < 5:
                 if result_splited[1] == "On":
@@ -229,10 +240,11 @@ def local_sensors():
     while 1:
         try:
             temperature = dhtDevice.temperature
-            print("Temperature: " + str(temperature))
+            #print("Temperature: " + str(temperature))
             humidity = dhtDevice.humidity
-            print("Humidity: " + str(humidity))
-            client_mqtt.publish(topic_sensors, '{"temperature":'+ str(temperature) + ', "humidity":' + str(humidity) + '}', 0)
+            #print("Humidity: " + str(humidity))
+            client_mqtt.publish(topic_sensors, '{"moisture":' + b_moisture + ', "temperature":'+ str(temperature) + ', "humidity":' + str(humidity) + '}', 0)
+            #client_mqtt.publish(topic_sensors, '{"humidity":' + str(humidity) +'}', 0)
             sleep(5)
         except RuntimeError as error:
         # Errors happen fairly often, DHT's are hard to read, just keep going
@@ -344,6 +356,7 @@ def stop_buzzer():
 
 def bluetooth_sensors():
     global pump_number
+    global b_moisture
 
     host = ""
     port_sensor = 2
@@ -374,13 +387,13 @@ def bluetooth_sensors():
         b_z = result_splited[3]
         b_tree = result_splited[4]
         
-            
-        client_mqtt.publish(topic_sensors + "/tree" + b_tree, '{"moisture":' + b_moisture + ', "x":' + b_x + ', "y":' + b_y + ', "z":' + b_z + '}', 0)
+          
+        client_mqtt.publish(topic_sensors + "/tree" + b_tree, '{"x":' + b_x + ', "y":' + b_y + ', "z":' + b_z + '}', 0)
 
-        if float(b_moisture) < 50 and pump_command_stop == False:
+        if float(b_moisture) < soil_percentage and pump_command_stop == False:
             GPIO.output( pin_led , GPIO.HIGH )
             pump_number = result_splited[2]
-        elif float(b_moisture) >= 50 and pump_command == False:
+        elif float(b_moisture) >= soil_percentage and pump_command == False:
             GPIO.output( pin_led , GPIO.LOW )
             pump_number = 0
 
@@ -555,6 +568,10 @@ while 1:
                 client_actuator.send("Not a lcd command")
         else:
             client_actuator.send("Not a correct number of commands for LCD")
+
+    elif result_splited[0] == "Moisture":
+        soil_percentage = float(result_splited[1])
+        client_actuator.send("Changed minimum soil moisture for water pump")
 
     elif result_splited[0] == "Pump":
         if size > 1 and size < 5:
