@@ -6,7 +6,8 @@ global tree
 global bt_addr
 import smbus
 import Adafruit_MCP3008
-import RPi.GPIO as GPIO			
+import RPi.GPIO as GPIO		
+import random	
 
 tree = "15"
 
@@ -100,7 +101,9 @@ def bluetooth_sensors():
             y = acc_y/16384.0
             z = acc_z/16384.0
 
-            sock_sensor.send(moisture + " " + str(x) + " " + str(y) + " " + str(z) + " " + tree)
+            ph = random.uniform(3, 10)
+
+            sock_sensor.send(moisture + " " + str(x) + " " + str(y) + " " + str(z) + " " + str("{:.2f}".format(ph)) + " " + tree)
             #print("Soil Moisture: " + str(moisture))
             #print("Accelerometer: "+ str(x) + " " + str(y) + " " + str(z))
             sleep(5)
