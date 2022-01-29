@@ -385,10 +385,13 @@ def bluetooth_sensors():
         b_x = result_splited[1]
         b_y = result_splited[2]
         b_z = result_splited[3]
-        b_tree = result_splited[4]
+        b_ph = result_splited[4]
+        b_tree = result_splited[5]
+        
         
           
-        client_mqtt.publish(topic_sensors + "/tree" + b_tree, '{"x":' + b_x + ', "y":' + b_y + ', "z":' + b_z + '}', 0)
+        client_mqtt.publish(topic_sensors + "/tree" + b_tree, '{"x":' + b_x + ', "y":' + b_y + ', "z":' + b_z + ', ph:' +  b_ph + '}', 0)
+        
 
         if float(b_moisture) < soil_percentage and pump_command_stop == False:
             GPIO.output( pin_led , GPIO.HIGH )
@@ -398,10 +401,10 @@ def bluetooth_sensors():
             pump_number = 0
 
         if float(b_x) < -0.9 and tree_number == 0:
-            buzzer_control(True, int(result_splited[4]),False)
+            buzzer_control(True, int(b_tree),False)
 
-        elif float(b_x) >= -0.9 and tree_number == int(result_splited[4]):
-            buzzer_control(False, int(result_splited[4]),False)
+        elif float(b_x) >= -0.9 and tree_number == int(b_tree):
+            buzzer_control(False, int(b_tree),False)
 
         
         
