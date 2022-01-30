@@ -469,6 +469,137 @@ def buzzer_control(mode,number,lcd):
             return False
 
 
+def bluetooth_actuator():
+    global lcd_message_1
+    global lcd_message_2
+    global lcd_command
+    global lcd_number
+    global soil_percentage
+    global pump_command
+    global pump_number
+    global pump_command_stop
+    host = ""
+    port_actuator = 1
+    server_actuator = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+    print("INFO: Creating Bluetooth Socket for actuators")
+    try:
+        #server.bind((host, bluetooth.PORT_ANY))
+        server_actuator.bind((host, port_actuator))
+        print("INFO: Binding actuators complete")
+    except:
+        print("ERROR: Binding actuators incomplete")
+
+    server_actuator.listen(1)
+
+    client_actuator, address_actuator = server_actuator.accept()
+    print("INFO: Server actuator connected to: ", address_actuator)
+    print("INFO: Client ", client_actuator)
+
+    try:
+        while 1:
+            #b_input = int(input())
+            data = client_actuator.recv(1024)
+            result = str(data).split("'")[1::2]
+            print("Data recieved for actuators: ", str(result[0]))
+            
+            result_splited = result[0].split("-")
+
+            size = len(result_splited)
+            
+            
+            if result_splited[0] == "Buzzer":
+                if size > 1 and size < 4:
+                    if result_splited[1] == "On":
+                        if size > 2:
+                            if buzzer_control(True, int(result_splited[2]),True) == True:
+                                client_actuator.send("Buzzer for tree: "+ result_splited[2] + " is On")
+                            else:
+                                client_actuator.send("Buzzer for tree: " + str(tree_number) +  "is alredy ON")
+                            
+                        else:
+                            client_actuator.send("You must write which tree is down")
+
+                    elif result_splited[1] == "Off":
+                        if size > 2:
+                            if buzzer_control(False, int(result_splited[2]),True) == True:             
+                                client_actuator.send("Buzzer for tree: "+ result_splited[2] + " is Off")
+                            else:
+                                client_actuator.send("The Buzzer is not for this tree is for tree: " + str(tree_number))
+                        
+
+                    else:
+                        client_actuator.send("Not a buzzer command")
+                else:
+                    client_actuator.send("Not a correct number of commands for buzzer")
+
+            elif result_splited[0] == "LCD":
+                if size > 1 and size < 5:
+                    if result_splited[1] == "On":
+                        if size > 2:
+                            if tree_down == False:
+                                if lcd_number == 0 or lcd_number == int(result_splited[3]):
+                                    lcd_number = int(result_splited[3])
+                                    lcd_message_1 = result_splited[2]
+                                    lcd_message_2 = result_splited[3]
+                                    lcd_command = True   
+                                    client_actuator.send("LCD showing the message")
+                                else:
+                                    client_actuator.send("There is another message from other tree showing") 
+                            else:
+                                client_actuator.send("A tree is down the message is not tree showing")
+                            
+                        else:
+                            client_actuator.send("You must write a message")   
+
+                    elif result_splited[1] == "Off":
+                        if lcd_number == int(result_splited[2]):
+                            lcd_number = 0
+                            lcd_command = False
+                            client_actuator.send("LCD stopped showing the message")   
+                        else:
+                            client_actuator.send("The message is not from this tree is from: " + str(lcd_number)) 
+
+                    else:
+                        client_actuator.send("Not a lcd command")
+                else:
+                    client_actuator.send("Not a correct number of commands for LCD")
+
+            elif result_splited[0] == "Moisture":
+                soil_percentage = float(result_splited[1])
+                client_actuator.send("Changed minimum soil moisture for water pump")
+
+            elif result_splited[0] == "Pump":
+                if size > 1 and size < 5:
+                    if result_splited[1] == "On":
+                        GPIO.output( pin_led , GPIO.HIGH )
+                        pump_command = True
+                        pump_number = result_splited[2]
+                        client_actuator.send("Pump working")
+                    if result_splited[1] == "Off":
+                        GPIO.output( pin_led , GPIO.LOW )
+                        pump_command = False
+                        pump_number = 0
+                        if result_splited[3] == "Yes":
+                            pump_command_stop = True
+                        if result_splited[3] == "No":
+                            pump_command_stop = False
+                        client_actuator.send("Pump stopped")
+                else:
+                    client_actuator.send("Not a correct number of commands for pump")
+
+            else:
+                client_actuator.send("Not a command")
+    except:
+        client_actuator.close()
+        server_actuator.close()
+        bluetooth_actuator() 
+    
+
+
+
+
+
+
 client_mqtt = connect_mqtt()
 client_mqtt.loop_start()
 
@@ -486,123 +617,8 @@ r.start()
 s = threading.Thread(target = bluetooth_sensors)
 s.start()
 
-host = ""
-port_actuator = 1
-server_actuator = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-print("INFO: Creating Bluetooth Socket for actuators")
-try:
-    #server.bind((host, bluetooth.PORT_ANY))
-    server_actuator.bind((host, port_actuator))
-    print("INFO: Binding actuators complete")
-except:
-    print("ERROR: Binding actuators incomplete")
-
-server_actuator.listen(1)
-
-client_actuator, address_actuator = server_actuator.accept()
-print("INFO: Server actuator connected to: ", address_actuator)
-print("INFO: Client ", client_actuator)
-
-
-while 1:
-    #b_input = int(input())
-    data = client_actuator.recv(1024)
-    result = str(data).split("'")[1::2]
-    print("Data recieved for actuators: ", str(result[0]))
-    
-    result_splited = result[0].split("-")
-
-    size = len(result_splited)
-    
-    
-    if result_splited[0] == "Buzzer":
-        if size > 1 and size < 4:
-            if result_splited[1] == "On":
-                if size > 2:
-                    if buzzer_control(True, int(result_splited[2]),True) == True:
-                        client_actuator.send("Buzzer for tree: "+ result_splited[2] + " is On")
-                    else:
-                        client_actuator.send("Buzzer for tree: " + str(tree_number) +  "is alredy ON")
-                    
-                else:
-                    client_actuator.send("You must write which tree is down")
-
-            elif result_splited[1] == "Off":
-                if size > 2:
-                    if buzzer_control(False, int(result_splited[2]),True) == True:             
-                        client_actuator.send("Buzzer for tree: "+ result_splited[2] + " is Off")
-                    else:
-                        client_actuator.send("The Buzzer is not for this tree is for tree: " + str(tree_number))
-                
-
-            else:
-                client_actuator.send("Not a buzzer command")
-        else:
-            client_actuator.send("Not a correct number of commands for buzzer")
-
-    elif result_splited[0] == "LCD":
-        if size > 1 and size < 5:
-            if result_splited[1] == "On":
-                if size > 2:
-                    if tree_down == False:
-                        if lcd_number == 0 or lcd_number == int(result_splited[3]):
-                            lcd_number = int(result_splited[3])
-                            lcd_message_1 = result_splited[2]
-                            lcd_message_2 = result_splited[3]
-                            lcd_command = True   
-                            client_actuator.send("LCD showing the message")
-                        else:
-                            client_actuator.send("There is another message from other tree showing") 
-                    else:
-                        client_actuator.send("A tree is down the message is not tree showing")
-                    
-                else:
-                    client_actuator.send("You must write a message")   
-
-            elif result_splited[1] == "Off":
-                if lcd_number == int(result_splited[2]):
-                    lcd_number = 0
-                    lcd_command = False
-                    client_actuator.send("LCD stopped showing the message")   
-                else:
-                    client_actuator.send("The message is not from this tree is from: " + str(lcd_number)) 
-
-            else:
-                client_actuator.send("Not a lcd command")
-        else:
-            client_actuator.send("Not a correct number of commands for LCD")
-
-    elif result_splited[0] == "Moisture":
-        soil_percentage = float(result_splited[1])
-        client_actuator.send("Changed minimum soil moisture for water pump")
-
-    elif result_splited[0] == "Pump":
-        if size > 1 and size < 5:
-            if result_splited[1] == "On":
-                GPIO.output( pin_led , GPIO.HIGH )
-                pump_command = True
-                pump_number = result_splited[2]
-                client_actuator.send("Pump working")
-            if result_splited[1] == "Off":
-                GPIO.output( pin_led , GPIO.LOW )
-                pump_command = False
-                pump_number = 0
-                if result_splited[3] == "Yes":
-                    pump_command_stop = True
-                if result_splited[3] == "No":
-                    pump_command_stop = False
-                client_actuator.send("Pump stopped")
-        else:
-            client_actuator.send("Not a correct number of commands for pump")
-
-    else:
-        client_actuator.send("Not a command")
-
-
-
-    
+bluetooth_actuator()    
             
 
 
-client_actuator.close()
-server_actuator.close()
+
