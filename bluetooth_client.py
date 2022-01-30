@@ -109,8 +109,8 @@ def bluetooth_sensors():
             sleep(5)
         
 
-    sock_actuator.close()
-    sys.exit("Try again later")
+    sock_sensor.close()
+    sys.exit("WARNING: Try again later")
 
 bus = smbus.SMBus(1) 	# or bus = smbus.SMBus(0) for older version boards
 Device_Address = 0x68   # MPU6050 device address
@@ -120,7 +120,8 @@ MPU_Init()
 s = threading.Thread(target = bluetooth_sensors)
 s.start()
 
-
+### Connection bluetooth actuators before app ###
+'''
 print("INFO: Trying to connect to {} on PSM 0x{}...".format(bt_addr, port))
 try:
     sock_actuator.connect((bt_addr, port))
@@ -147,3 +148,4 @@ if connected_act == True:
 
 sock_actuator.close()
 sys.exit("WARNING: Try again later")
+'''
