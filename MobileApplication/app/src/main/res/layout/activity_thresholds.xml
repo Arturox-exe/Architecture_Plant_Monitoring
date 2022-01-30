@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Thresholds"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_Thresholds"
+        android:text="Thresholds"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:layout_margin="10dp">
+    </TextView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_Temp"
+        android:text="Temperature (°C)"
+        android:textSize="23dp"
+        android:textStyle="bold"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_Hum"
+        android:text="Humidity (%)"
+        android:textSize="23dp"
+        android:textStyle="bold"
+        android:layout_margin="10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/tv_Thres_Hum"
+            android:layout_width="5dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Min:"
+            android:textStyle="bold"
+            android:textSize="15dp"/>
+
+        <EditText
+            android:id="@+id/et_HumMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15dp"
+            android:inputType="numberDecimal"/>
+
+        <TextView
+            android:id="@+id/tv_Thres_HumMax"
+            android:layout_width="5dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Max:"
+            android:textStyle="bold"
+            android:textSize="15dp"/>
+
+        <EditText
+            android:id="@+id/et_HumMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15dp"
+            android:inputType="numberDecimal"/>
+        <Button
+            android:layout_width="20dp"
+            android:layout_height="40dp"
+            android:text="OK"
+            android:layout_weight="1"
+            android:id="@+id/btn_hum_threshold_ok">
+
+        </Button>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_Moisture"
+        android:text="Soil Moisture (%)"
+        android:textSize="23dp"
+        android:textStyle="bold"
+        android:layout_margin="10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/tv_Thres_Mois"
+            android:layout_width="5dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Min:"
+            android:textStyle="bold"
+            android:textSize="15dp"/>
+
+        <EditText
+            android:id="@+id/et_MoisMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15dp"
+            android:inputType="numberDecimal"/>
+
+        <TextView
+            android:id="@+id/tv_Thres_MoisMax"
+            android:layout_width="5dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Max:"
+            android:textStyle="bold"
+            android:textSize="15dp"/>
+
+        <EditText
+            android:id="@+id/et_MoisMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15dp"
+            android:inputType="numberDecimal"/>
+        <Button
+            android:layout_width="20dp"
+            android:layout_height="40dp"
+            android:text="OK"
+            android:layout_weight="1"
+            android:id="@+id/btn_mois_threshold_ok">
+
+        </Button>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_test_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="15dp"/>
+
+</LinearLayout>

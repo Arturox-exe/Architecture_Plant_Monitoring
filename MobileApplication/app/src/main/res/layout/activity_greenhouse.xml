@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Greenhouse">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="1dp">
+
+        <TextView
+            android:id="@+id/textView_GW"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Greenhouse 'AppleFarm'"
+            android:textSize="25dp"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_margin="1dp">
+
+            <TextView
+                android:id="@+id/textView_ValuesTH"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="12"
+                android:text="Values and Thresholds"
+                android:textStyle="bold"
+                android:textSize="18dp"/>
+
+            <TextView
+                android:id="@+id/textView_Alarms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Alarms"
+                android:textSize="18dp"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_margin="1dp">
+
+            <TextView
+                android:id="@+id/textView_Temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Temp (°C): "
+                android:textStyle="bold"
+                android:textSize="18dp"/>
+
+            <TextView
+                android:id="@+id/textView_TempValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Temp Value"
+                android:textSize="18dp"/>
+
+            <ImageView
+                android:background="@drawable/round_button_on"
+                android:orientation="horizontal"
+                android:id="@+id/powerCircleTMP"
+                android:layout_width="40dp"
+                android:layout_height="40sp"
+                android:layout_marginRight="15dp"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="1dp">
+
+            <TextView
+                android:id="@+id/tv_Thres_Temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Min:"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:layout_marginLeft="10dp"/>
+
+            <EditText
+                android:id="@+id/et_TempMin"
+                android:layout_width="55dp"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:inputType="numberDecimal"/>
+
+            <TextView
+                android:id="@+id/tv_Thres_TempMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Max:"
+                android:textStyle="bold"
+                android:textSize="15dp"/>
+
+            <EditText
+                android:id="@+id/et_TempMax"
+                android:layout_width="55dp"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:inputType="numberDecimal"/>
+            <Button
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:text="OK"
+                android:id="@+id/btn_temp_threshold_ok"
+                android:layout_marginLeft="10dp">
+
+            </Button>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_margin="1dp">
+
+            <TextView
+                android:id="@+id/textView_Hum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hum (%):  "
+                android:textStyle="bold"
+                android:textSize="18dp"/>
+
+            <TextView
+                android:id="@+id/textView_HumValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Hum Value"
+                android:textSize="18dp"/>
+
+            <ImageView
+                android:background="@drawable/round_button_on"
+                android:orientation="horizontal"
+                android:id="@+id/powerCircleHUM"
+                android:layout_width="40dp"
+                android:layout_height="40sp"
+                android:layout_marginRight="15dp"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="1dp">
+
+            <TextView
+                android:id="@+id/tv_Thres_Hum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Min:"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:layout_marginLeft="10dp"/>
+
+            <EditText
+                android:id="@+id/et_HumMin"
+                android:layout_width="55dp"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:inputType="numberDecimal"/>
+
+            <TextView
+                android:id="@+id/tv_Thres_HumMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Max:"
+                android:textStyle="bold"
+                android:textSize="15dp"/>
+
+            <EditText
+                android:id="@+id/et_HumMax"
+                android:layout_width="55dp"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:inputType="numberDecimal"/>
+            <Button
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:text="OK"
+                android:id="@+id/btn_hum_threshold_ok"
+                android:layout_marginLeft="10dp">
+
+            </Button>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_margin="1dp">
+
+            <TextView
+                android:id="@+id/textView_Mois2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Soil Moisture (%):  "
+                android:textStyle="bold"
+                android:textSize="18dp"/>
+
+            <TextView
+                android:id="@+id/textView_MoisValue2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Hum Value"
+                android:textSize="18dp"/>
+
+            <ImageView
+                android:background="@drawable/round_button_on"
+                android:orientation="horizontal"
+                android:id="@+id/powerCircleMOIS2"
+                android:layout_width="40dp"
+                android:layout_height="40sp"
+                android:layout_marginRight="15dp"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="1dp">
+
+            <TextView
+                android:id="@+id/tv_Thres_Mois"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Min:"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:layout_marginLeft="10dp"/>
+
+            <EditText
+                android:id="@+id/et_MoisMin"
+                android:layout_width="55dp"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:inputType="numberDecimal"/>
+
+            <TextView
+                android:id="@+id/tv_Thres_MoisMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Max:"
+                android:textStyle="bold"
+                android:textSize="15dp"/>
+
+            <EditText
+                android:id="@+id/et_MoisMax"
+                android:layout_width="55dp"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:inputType="numberDecimal"/>
+            <Button
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:text="OK"
+                android:id="@+id/btn_mois_threshold_ok"
+                android:layout_marginLeft="10dp">
+
+            </Button>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView_Trees"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Trees in the Greenhouse"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/textView_DescriptionTrees"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Select the tree that you want to know its sensors values and if you want to send a command to the gateway for that tree."
+            android:textSize="16dp"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_margin="3dp">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:id="@+id/btn_tree1"
+                android:text="Tree1">
+            </Button>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:id="@+id/btn_tree2"
+                android:text="Tree2">
+            </Button>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:id="@+id/btn_tree3"
+                android:text="Tree3">
+            </Button>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:id="@+id/btn_tree4"
+                android:text="Tree4">
+            </Button>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_margin="3dp">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:id="@+id/btn_tree13"
+                android:text="Tree13">
+            </Button>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:id="@+id/btn_tree14"
+                android:text="Tree14">
+            </Button>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:id="@+id/btn_tree15"
+                android:text="Tree15">
+            </Button>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView_Thresholds"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Send Commands"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:id="@+id/btn_commands"
+                android:text="Commands">
+            </Button>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:id="@+id/btn_commands_bt"
+                android:text="Commands Bluetooth">
+            </Button>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

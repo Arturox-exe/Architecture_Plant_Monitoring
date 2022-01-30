@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Tree15">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_tree15"
+        android:text="Tree 15: Sensors Values"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:layout_margin="10dp">
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/textView_PH"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="PH:"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView_PHValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="PH Value"
+            android:textSize="25dp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_Alarms"
+        android:text="Alarms"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:layout_margin="10dp">
+
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/textView_PH_Alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="PH"
+            android:textStyle="bold"
+            android:textSize="25dp"/>
+
+        <ImageView
+            android:background="@drawable/round_button_on"
+            android:orientation="horizontal"
+            android:id="@+id/powerCirclePH"
+            android:layout_width="40dp"
+            android:layout_height="40sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/textView_Fall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tree Falls"
+            android:textStyle="bold"
+            android:textSize="25dp"/>
+
+        <ImageView
+            android:background="@drawable/round_button_on"
+            android:orientation="horizontal"
+            android:id="@+id/powerCircleTF"
+            android:layout_width="40dp"
+            android:layout_height="40sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_LcdMessage"
+        android:text="LCD Message"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:layout_margin="10dp">
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:id="@+id/textView_LCD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="LCD"
+            android:textStyle="bold"
+            android:textSize="25dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_LCD_SendMessage"
+            android:text="SEND MESSAGE"
+            android:layout_margin="2dp">
+
+        </Button>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_LCD_Off"
+            android:text="Off"
+            android:layout_margin="2dp">
+
+        </Button>
+
+    </LinearLayout>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Text your message for the LCD"
+        android:id="@+id/edt_sendmesage_lcd">
+    </EditText>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:id="@+id/textView_LCD_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="LCD Local"
+            android:textStyle="bold"
+            android:textSize="25dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_LCD_SendMessage_bt"
+            android:text="SEND MESSAGE"
+            android:layout_margin="2dp">
+
+        </Button>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_LCD_Off_bt"
+            android:text="Off"
+            android:layout_margin="2dp">
+
+        </Button>
+
+    </LinearLayout>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Text your message for the LCD"
+        android:id="@+id/edt_sendmesage_lcd_bt">
+    </EditText>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_PH"
+        android:text="PH"
+        android:textSize="23dp"
+        android:textStyle="bold"
+        android:layout_margin="10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/tv_Thres_PH"
+            android:layout_width="5dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Min:"
+            android:textStyle="bold"
+            android:textSize="15dp"/>
+
+        <EditText
+            android:id="@+id/et_PHMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15dp"
+            android:inputType="numberDecimal"/>
+
+        <TextView
+            android:id="@+id/tv_Thres_PHMax"
+            android:layout_width="5dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Max:"
+            android:textStyle="bold"
+            android:textSize="15dp"/>
+
+        <EditText
+            android:id="@+id/et_PHMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="15dp"
+            android:inputType="numberDecimal"/>
+        <Button
+            android:layout_width="20dp"
+            android:layout_height="40dp"
+            android:text="OK"
+            android:layout_weight="1"
+            android:id="@+id/btn_ph_threshold_ok">
+
+        </Button>
+
+    </LinearLayout>
+
+</LinearLayout>
