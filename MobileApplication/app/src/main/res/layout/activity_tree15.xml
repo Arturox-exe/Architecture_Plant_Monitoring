@@ -28,9 +28,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="PH:"
-            android:textSize="25dp"
-            android:textStyle="bold" />
+            android:text="PH (%):"
+            android:textStyle="bold"
+            android:textSize="25dp"/>
 
         <TextView
             android:id="@+id/textView_PHValue"
@@ -150,52 +150,11 @@
         android:hint="Text your message for the LCD"
         android:id="@+id/edt_sendmesage_lcd">
     </EditText>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="5dp">
-
-        <TextView
-            android:id="@+id/textView_LCD_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="LCD Local"
-            android:textStyle="bold"
-            android:textSize="25dp"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_LCD_SendMessage_bt"
-            android:text="SEND MESSAGE"
-            android:layout_margin="2dp">
-
-        </Button>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_LCD_Off_bt"
-            android:text="Off"
-            android:layout_margin="2dp">
-
-        </Button>
-
-    </LinearLayout>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Text your message for the LCD"
-        android:id="@+id/edt_sendmesage_lcd_bt">
-    </EditText>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tv_PH"
-        android:text="PH"
+        android:text="PH (%)"
         android:textSize="23dp"
         android:textStyle="bold"
         android:layout_margin="10dp"/>

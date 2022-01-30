@@ -39,7 +39,8 @@ public class Greenhouse extends AppCompatActivity {
     final String publishTopic = "applefarm/gateway1";
     MqttAndroidClient mqttAndroidClient;
     String clientId = "Greenhouse";
-    private Button btn_tree15,btn_commands,btn_commands_btn;
+
+    private Button btn_tree15,btn_commands,btn_commands_bt;
     private TextView Temp_Value;
     private TextView Hum_Value;
     private TextView Mois_Value2;
@@ -56,7 +57,7 @@ public class Greenhouse extends AppCompatActivity {
         setContentView(R.layout.activity_greenhouse);
 
         btn_commands = findViewById(R.id.btn_commands);
-        btn_commands_btn = findViewById(R.id.btn_commands_bt);
+        btn_commands_bt = findViewById(R.id.btn_commands_bt);
         btn_tree15 = findViewById(R.id.btn_tree15);
         Temp_Value = findViewById(R.id.textView_TempValue);
         Hum_Value = findViewById(R.id.textView_HumValue);
@@ -263,7 +264,7 @@ public class Greenhouse extends AppCompatActivity {
             }
         });
 
-        btn_commands_btn.setOnClickListener(new View.OnClickListener() {
+        btn_commands_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent go_commands_bt = new Intent(Greenhouse.this,Commands_bt.class);
@@ -319,7 +320,7 @@ public class Greenhouse extends AppCompatActivity {
                         finalvalueMaxTemp = 24F;
                         finalvalueMinTemp = 18F;
                     }
-                    //Toast.makeText(Greenhouse.this, "TEMP: "+finalvalueMinTemp+"//"+finalvalueMaxTemp, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Greenhouse.this, "TEMP: "+finalvalueMinTemp+"//"+finalvalueMaxTemp, Toast.LENGTH_SHORT).show();
                     if ((Float.parseFloat(temp_value)<finalvalueMaxTemp) && (Float.parseFloat(temp_value)>finalvalueMinTemp)){
                         //Toast.makeText(Tree15.this,"TREE FALL TREE 15!",Toast.LENGTH_SHORT).show();
                         img_alarm_temp.setBackgroundResource(R.drawable.round_button_on);
@@ -334,7 +335,7 @@ public class Greenhouse extends AppCompatActivity {
                         finalvalueMaxHum = 80F;
                         finalvalueMinHum = 60F;
                     }
-                    //Toast.makeText(Greenhouse.this, "HUM: "+finalvalueMinHum+"//"+finalvalueMaxHum, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Greenhouse.this, "HUM: "+finalvalueMinHum+"//"+finalvalueMaxHum, Toast.LENGTH_SHORT).show();
                     if ((Float.parseFloat(hum_value)<finalvalueMaxHum) && (Float.parseFloat(hum_value)>finalvalueMinHum)){
                         //Toast.makeText(Tree15.this,"TREE FALL TREE 15!",Toast.LENGTH_SHORT).show();
                         img_alarm_hum.setBackgroundResource(R.drawable.round_button_on);
@@ -347,7 +348,7 @@ public class Greenhouse extends AppCompatActivity {
                         finalvalueMaxMois = 90F;
                         finalvalueMinMois = 60F;
                     }
-                    //Toast.makeText(Greenhouse.this, "MOIS: "+finalvalueMinMois+"//"+finalvalueMaxMois, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Greenhouse.this, "MOIS: "+finalvalueMinMois+"//"+finalvalueMaxMois, Toast.LENGTH_SHORT).show();
                     if ((Float.parseFloat(mois_value)<finalvalueMaxMois) && (Float.parseFloat(mois_value)>finalvalueMinMois)){
                         //Toast.makeText(Tree15.this,"TREE FALL TREE 15!",Toast.LENGTH_SHORT).show();
                         img_alarm_mois.setBackgroundResource(R.drawable.round_button_on);

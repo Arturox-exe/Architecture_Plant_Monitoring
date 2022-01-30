@@ -2,17 +2,25 @@ package dte.masteriot.mdp.AppleFarmFinal;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Handler;
 
 public class Commands_bt extends AppCompatActivity {
 
@@ -22,10 +30,11 @@ public class Commands_bt extends AppCompatActivity {
     final String MessagePumpOn = "Pump-On-15";
     final String MessagePumpOff = "Pump-Off-15-Yes";
     OutputStream outputStream = null;
-    BluetoothSocket btSocket = null;
 
-    private Button btn_BuzOn, btn_BuzOff, btn_PumpOn, btn_PumpOff;
+    private Button btn_BuzOn,btn_BuzOff,btn_PumpOn,btn_PumpOff;
 
+    public Commands_bt() {
+    }
 
     @Override
     protected void onCreate(Bundle SavedInstanceState) {
@@ -42,6 +51,7 @@ public class Commands_bt extends AppCompatActivity {
         BluetoothDevice hc05 = btAdapter.getRemoteDevice("E4:5F:01:3C:92:EB");
         System.out.println(hc05.getName());
 
+        BluetoothSocket btSocket = null;
         int contador = 0;
         do {
             try {
@@ -55,10 +65,10 @@ public class Commands_bt extends AppCompatActivity {
             contador++;
         } while (!btSocket.isConnected() && contador < 3);
 
-
         try {
             outputStream = btSocket.getOutputStream();
-        } catch (IOException e) {
+        }
+        catch (IOException e){
             e.printStackTrace();
         }
 

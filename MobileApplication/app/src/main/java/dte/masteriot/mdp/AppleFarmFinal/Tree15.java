@@ -2,9 +2,6 @@ package dte.masteriot.mdp.AppleFarmFinal;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -34,11 +31,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.util.UUID;
-
 public class Tree15 extends AppCompatActivity {
 
     final String serverUri = "tcp://broker.hivemq.com:1883";
@@ -47,20 +39,17 @@ public class Tree15 extends AppCompatActivity {
     String publishMessageLcdOnSendMess;
     final String publishMessageLcdOff = "LCD-Off-15";
     private TextView TV_ph;
-    ImageView img_alarm_X, img_alarm_ph;
-    String ph_value, x_value;
+    ImageView img_alarm_X,img_alarm_ph;
+    String ph_value,x_value;
     MqttAndroidClient mqttAndroidClient;
     String clientId = "Tree15";
-    private Button btn_LcdOnSendMess, btn_LcdOff, btn_ok_ph, btn_LcdOnSendMess_bt, btn_LcdOff_bt;
+    private Button btn_LcdOnSendMess,btn_LcdOff,btn_ok_ph;
     String What_Btn_tree15;
-    EditText text_lcd, et_min_ph, et_max_ph, text_lcd_bt;
+    EditText text_lcd,et_min_ph,et_max_ph;
     private static final String TAG = "Tree15";
     float finalvalueMinPH;
     float finalvalueMaxPH;
-    final static UUID mUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    String valueMinPH, valueMaxPH;
-    OutputStream outputStream = null;
-    BluetoothSocket btSocket = null;
+    String valueMinPH,valueMaxPH;
 
 
     @Override
@@ -69,14 +58,11 @@ public class Tree15 extends AppCompatActivity {
         setContentView(R.layout.activity_tree15);
 
         btn_LcdOff = findViewById(R.id.btn_LCD_Off);
-        btn_LcdOff_bt = findViewById(R.id.btn_LCD_Off_bt);
         text_lcd = findViewById(R.id.edt_sendmesage_lcd);
-        text_lcd_bt = findViewById(R.id.edt_sendmesage_lcd_bt);
         TV_ph = findViewById(R.id.textView_PHValue);
-        img_alarm_X = findViewById(R.id.powerCircleTF);
-        img_alarm_ph = findViewById(R.id.powerCirclePH);
+        img_alarm_X =  findViewById(R.id.powerCircleTF);
+        img_alarm_ph =  findViewById(R.id.powerCirclePH);
         btn_LcdOnSendMess = findViewById(R.id.btn_LCD_SendMessage);
-        btn_LcdOnSendMess_bt = findViewById(R.id.btn_LCD_SendMessage_bt);
         btn_ok_ph = findViewById(R.id.btn_ph_threshold_ok);
         et_min_ph = findViewById(R.id.et_PHMin);
         et_max_ph = findViewById(R.id.et_PHMax);
@@ -86,32 +72,6 @@ public class Tree15 extends AppCompatActivity {
 
         //the message for the lcd in the tree15, the formant for the command is LCD-On-Example Message-15
         publishMessageLcdOnSendMess = "LCD-On-" + text_lcd.getText() + "-15";
-
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-        System.out.println(btAdapter.getBondedDevices());
-
-        BluetoothDevice hc05 = btAdapter.getRemoteDevice("E4:5F:01:3C:92:EB");
-        System.out.println(hc05.getName());
-
-        int contador = 0;
-        do {
-            try {
-                btSocket = hc05.createRfcommSocketToServiceRecord(mUUID);
-                System.out.println(btSocket);
-                btSocket.connect();
-                System.out.println(btSocket.isConnected());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            contador++;
-        } while (!btSocket.isConnected() && contador < 3);
-
-
-        try {
-            outputStream = btSocket.getOutputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         //Action for the button LCD SEND MESSAGE
         btn_LcdOnSendMess.setOnClickListener(new View.OnClickListener() {
@@ -132,34 +92,6 @@ public class Tree15 extends AppCompatActivity {
                 publishMessage();
             }
         });
-
-        //Action for the button LCD SEND MESSAGE
-        btn_LcdOnSendMess_bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //the message for the lcd in the tree15, the formant for the command is LCD-On-Example Message-15
-                try {
-                    String LCDMessage = "LCD-On-" + text_lcd_bt.getText() + "-15";
-                    byte[] bytes = LCDMessage.getBytes(Charset.defaultCharset());
-                    outputStream.write(bytes);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        //Action for the button OFF
-        btn_LcdOff_bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    byte[] bytes = publishMessageLcdOff.getBytes(Charset.defaultCharset());
-                    outputStream.write(bytes);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
         btn_ok_ph.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -247,7 +179,7 @@ public class Tree15 extends AppCompatActivity {
                 //addToHistory("Incoming message: " + new String(message.getPayload()));
                 String message_payload;
                 //Toast.makeText(Tree15.this,"Incoming message:" + new String(message.getPayload()),Toast.LENGTH_LONG).show();
-                message_payload = new String(message.getPayload());
+                message_payload =  new String(message.getPayload());
                 JSONObject jsonObject = new JSONObject(message_payload);
                 ph_value = jsonObject.getString("ph");
                 TV_ph.setText(ph_value);
@@ -257,18 +189,18 @@ public class Tree15 extends AppCompatActivity {
                 //Toast.makeText(Tree15.this, "RECEIVE MESS VALUE MIN ON CLICK PH: " + finalvalueMinPH, Toast.LENGTH_SHORT).show();
 
                 //Set the first threshold values to PH
-                if (finalvalueMaxPH == 0 && finalvalueMinPH == 0) {
+                if ( finalvalueMaxPH == 0 && finalvalueMinPH== 0){
                     finalvalueMaxPH = 7.0F;
                     finalvalueMinPH = 6.5F;
                 }
-                //Toast.makeText(Tree15.this, "PH: "+finalvalueMinPH+"//"+finalvalueMaxPH, Toast.LENGTH_SHORT).show();
-                if ((Float.parseFloat(ph_value) > finalvalueMinPH) && (Float.parseFloat(ph_value) < finalvalueMaxPH)) {
+                Toast.makeText(Tree15.this, "PH: "+finalvalueMinPH+"//"+finalvalueMaxPH, Toast.LENGTH_SHORT).show();
+                if ((Float.parseFloat(ph_value)>finalvalueMinPH) && (Float.parseFloat(ph_value)<finalvalueMaxPH) ){
                     img_alarm_ph.setBackgroundResource(R.drawable.round_button_on);
-                } else {
+                }else {
                     img_alarm_ph.setBackgroundResource(R.drawable.round_button_off);
                 }
 
-                if (Float.parseFloat(x_value) < -0.9) {
+                if (Float.parseFloat(x_value)<-0.9){
                     //Toast.makeText(Tree15.this,"TREE FALL TREE 15!",Toast.LENGTH_SHORT).show();
                     img_alarm_X.setBackgroundResource(R.drawable.round_button_off);
                 } else {
@@ -316,7 +248,6 @@ public class Tree15 extends AppCompatActivity {
 
 
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -346,19 +277,15 @@ public class Tree15 extends AppCompatActivity {
 
     public void publishMessage() {
         MqttMessage message = new MqttMessage();
-        switch (What_Btn_tree15) {
-            case "LcdSendMessage": {
-                message.setPayload(publishMessageLcdOnSendMess.getBytes());
+        switch (What_Btn_tree15){
+            case "LcdSendMessage": {message.setPayload(publishMessageLcdOnSendMess.getBytes());
                 message.setRetained(false);
                 message.setQos(0);
-                break;
-            }
-            case "LcdOff": {
-                message.setPayload(publishMessageLcdOff.getBytes());
+                break;}
+            case "LcdOff": {    message.setPayload(publishMessageLcdOff.getBytes());
                 message.setRetained(false);
                 message.setQos(0);
-                break;
-            }
+                break;}
 
         }
 
@@ -379,8 +306,8 @@ public class Tree15 extends AppCompatActivity {
         super.onPause();
         // write to shared preferences
         SharedPreferences.Editor values = getSharedPreferences("My_shared_preference", MODE_PRIVATE).edit();
-        values.putFloat("maxPH", finalvalueMaxPH);
-        values.putFloat("minPH", finalvalueMinPH);
+        values.putFloat("maxPH",finalvalueMaxPH);
+        values.putFloat("minPH",finalvalueMinPH);
         values.apply();
     }
 
@@ -388,9 +315,9 @@ public class Tree15 extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // read from shared preferences
-        SharedPreferences prefs = getSharedPreferences("My_shared_preference", MODE_PRIVATE);
-        finalvalueMaxPH = prefs.getFloat("maxPH", 0);
-        finalvalueMinPH = prefs.getFloat("minPH", 0);
+        SharedPreferences prefs = getSharedPreferences("My_shared_preference",MODE_PRIVATE);
+        finalvalueMaxPH = prefs.getFloat("maxPH",0);
+        finalvalueMinPH = prefs.getFloat("minPH",0);
 
     }
 }
